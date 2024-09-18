@@ -1,14 +1,12 @@
 # SG4NLP
 Synthetic data generation for NLP
 
-
-
 ### Running
 - To run one specific configuration change the configuration in ```config.py``` file and then use the ```runner.py``` file to call the pipeline.
 - To run multiple configuration and the whole pipeline including generation, testing, and over the orginal dataset
-  - ```ner_runner.py``` for name entity recognition
-  - ```intent_detection_runner.py``` for intent detection
-  - ```text_similarity_runner.py``` for text similarity
+  - ```ner_runner.py``` for Name Entity Recognition
+  - ```intent_detection_runner.py``` for Intent Detection
+  - ```text_similarity_runner.py``` for Text Similarity
 
 ### Repository structure
 - ```data``` folder consists of:
@@ -20,3 +18,4 @@ Synthetic data generation for NLP
   - ```generate_dataset``` module consists of all files related to dataset generation
   - ```method``` module consists of all files related to prediction
   - ```parse_dataset``` module consists of all files related to parsing different datasets
+- ```mlflow.zip``` unzip it at the same place. Contains all the predictions of different methods and all tasks.
