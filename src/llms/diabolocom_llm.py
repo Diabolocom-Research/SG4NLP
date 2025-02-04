@@ -47,10 +47,10 @@ def caching_layer_diabolocom(
     composite_key = f"{model_name}:{model_temperature}:{message}:{project_string}"
     cached_response = redis_cli.get(composite_key)
     if cached_response:
-        logger.info("Cache hit for key: %s", composite_key)
+        # logger.info("Cache hit for key: %s", composite_key)
         return cached_response.decode("utf-8") if isinstance(cached_response, bytes) else cached_response
     else:
-        logger.info("Cache miss for key: %s", composite_key)
+        # logger.info("Cache miss for key: %s", composite_key)
         output = llm._generate([message]).generations[0][0].text
         redis_cli.set(composite_key, output)
         return output

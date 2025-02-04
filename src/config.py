@@ -4,7 +4,7 @@ The file provides data class specifing interface for input/output
 
 from pathlib import Path
 from typing import List, Optional
-from pydantic.dataclasses import dataclass
+from dataclasses import dataclass, field
 
 DATA_FOLDER = Path("../data")
 MLFLOW_URI = "http://127.0.0.1:8080"
@@ -26,6 +26,28 @@ gpt_llm = ["gpt-4o", "gpt-3.5-turbo", "gpt-4o-mini"]
 claude_llm = ["claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"]
 
 big_llm_list = gpt_llm + claude_llm + anyscale_llm
+
+
+
+
+@dataclass
+class Dataset:
+    name: str = "crossner_politics"
+    number_of_test_examples: int = 200  # These are the number of examples used for testing
+    dataset_specific_params: Optional[dict] = field(default=None)
+
+
+@dataclass
+class GenerateDataset:
+    dataset: Dataset = field(default_factory=lambda: Dataset())
+    llm_for_generation: str = "llama3:70b"
+    k_shot: int = 2  # Number of examples per class used for generating dataset
+    number_of_examples_to_generate: int = field(init=False)  # Number of examples to generate
+    def __post_init__(self):
+        self.number_of_examples_to_generate = self.dataset.number_of_test_examples
+
+
+
 
 
 @dataclass
@@ -50,6 +72,8 @@ class BenchmarkRunnerArguments:
     number_of_examples_per_score: int = 5 # Specifies number of examples used per score generating text similarity examples
     number_of_examples_for_original_dataset: int = 10 # Specifies number of examples used per score generating text similarity examples
 
+    dataset_params: Dataset = field(default_factory=lambda: Dataset())
+    generate_dataset_params: Optional[GenerateDataset] = field(default=None)
 
 @dataclass
 class GenerateRunnerArguments:

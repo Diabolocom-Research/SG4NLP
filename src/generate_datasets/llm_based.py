@@ -8,8 +8,8 @@ import pickle
 import random
 from pathlib import Path
 from tqdm.auto import tqdm
-from config import NERMolecule, NERDataPoint
-from src.diabolocom_llm_endpoint import generate_response
+# from config import NERMolecule, NERDataPoint
+# from src.diabolocom_llm_endpoint import generate_response
 from .prompts import label_prompts, example_prompt
 
 def get_completion(prompt, llm):

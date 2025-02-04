@@ -1,24 +1,47 @@
 '''The orchestrator which does all the heavy lifting by calling various sub modules'''
 import random
 import uuid
-import redis
+
 import mlflow
 import numpy as np
+import redis
 from dotenv import load_dotenv
 from nervaluate import Evaluator
+from scipy.stats import pearsonr
+from scipy.stats import spearmanr
+from sklearn.metrics import classification_report
+from sklearn.metrics import mean_squared_error as mse
+from sklearn.preprocessing import LabelBinarizer
 
+from config import Dataset, GenerateDataset
 from src.config import *
 from src.generate_datasets import generate_datasets
 from src.methods import get_predictions
 from src.parse_datasets import dataset_parser
 
 
-from sklearn.preprocessing import LabelBinarizer
-from sklearn.metrics import classification_report
+from dataclasses import asdict
 
-from scipy.stats import pearsonr
-from scipy.stats import spearmanr
-from sklearn.metrics import mean_squared_error as mse
+def get_dataset(dataset_params: Dataset, generate_dataset_params: Optional[GenerateDataset] = None):
+    """Here we will after all the process read the dataset
+    dataset_params is always required
+    if generated_dataset is also passed, then we assume that the dataset to retrieve is generated
+    """
+
+
+
+
+    if generate_dataset_params:
+        # here it would mostly be finding the right config based on the arguments and then retrive the dataset
+        raise NotImplementedError
+    else:
+        params = asdict(dataset_params)
+        params['generated'] = False
+        params["datafolder"] = DATA_FOLDER
+        dataset = dataset_parser.get_dataset(dataset_name=dataset_params.name, **params)
+        dataset['test'] = dataset["test"][:dataset_params.number_of_test_examples]
+        return dataset
+
 
 
 def set_seed(seed=42):
@@ -72,6 +95,14 @@ def benchmark_orch(benchmark_runner_arguments: BenchmarkRunnerArguments):
     else:
         r = ""
 
+
+    dataset_params =benchmark_runner_arguments.dataset_params
+    generate_dataset_params = benchmark_runner_arguments.generate_dataset_params
+
+    dataset = get_dataset(dataset_params=dataset_params, generate_dataset_params=generate_dataset_params)
+    print(dataset["extra"])
+    raise IOError
+
     # if benchmark_runner_arguments.llm in ["gpt-3.5-turbo","gpt-4o", "mistralai/Mixtral-8x7B-Instruct-v0.1"]:
     #     set_llm_cache(SQLiteCache(database_path=".langchain.db"))
 
@@ -87,7 +118,6 @@ def benchmark_orch(benchmark_runner_arguments: BenchmarkRunnerArguments):
         "dataset_string": generate_dataset_string(benchmark_runner_arguments),
         "number_of_examples_for_original_dataset": benchmark_runner_arguments.number_of_examples_for_original_dataset
     }
-
 
     dataset = dataset_parser.get_dataset(benchmark_runner_arguments.dataset,
                                          **dataset_params)
@@ -226,4 +256,6 @@ if __name__ == "__main__":
                "mistralai/Mixtral-8x7B-Instruct-v0.1",
                "mistralai/Mixtral-8x22B-Instruct-v0.1", "gpt-4o-mini"]
 
-    print(benchmark_orch(benchmark_runner_arguments=BenchmarkRunnerArguments()))
+    # print(benchmark_orch(benchmark_runner_arguments=BenchmarkRunnerArguments()))
+    benchmark_argument = BenchmarkRunnerArguments()
+    benchmark_orch(benchmark_argument)
