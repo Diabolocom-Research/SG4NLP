@@ -100,27 +100,7 @@ def benchmark_orch(benchmark_runner_arguments: BenchmarkRunnerArguments):
     generate_dataset_params = benchmark_runner_arguments.generate_dataset_params
 
     dataset = get_dataset(dataset_params=dataset_params, generate_dataset_params=generate_dataset_params)
-    print(dataset["extra"])
-    raise IOError
 
-    # if benchmark_runner_arguments.llm in ["gpt-3.5-turbo","gpt-4o", "mistralai/Mixtral-8x7B-Instruct-v0.1"]:
-    #     set_llm_cache(SQLiteCache(database_path=".langchain.db"))
-
-    dataset_params = {
-        "datafolder": DATA_FOLDER,
-        "generated": benchmark_runner_arguments.generated,
-        "k_shot": benchmark_runner_arguments.k_shot,
-        "llm": benchmark_runner_arguments.llm,
-        "number_of_examples": benchmark_runner_arguments.number_of_examples,
-        "task": benchmark_runner_arguments.task,
-        "number_of_ner": benchmark_runner_arguments.number_of_ner,
-        "number_of_examples_per_intent": benchmark_runner_arguments.number_of_examples_per_intent,
-        "dataset_string": generate_dataset_string(benchmark_runner_arguments),
-        "number_of_examples_for_original_dataset": benchmark_runner_arguments.number_of_examples_for_original_dataset
-    }
-
-    dataset = dataset_parser.get_dataset(benchmark_runner_arguments.dataset,
-                                         **dataset_params)
 
     method_params = {
         "splits": benchmark_runner_arguments.split,
