@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from .prompts import get_entities_prompt
 from langchain.prompts import PromptTemplate
 from .common_utils import get_response_schema
-from src.llm_endpoints import generate_response
+from src.diabolocom_llm_endpoint import generate_response
 from langchain.output_parsers import StructuredOutputParser
 
 
