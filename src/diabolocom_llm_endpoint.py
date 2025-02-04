@@ -147,39 +147,5 @@ if __name__ == '__main__':
         [/INST]
         """
 
-    # prompt = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-    # You are an expert in identifying topics and extracting insights from customer communication. Specifically, given a user text, your task is to extract both extractive keywords (direct phrases/terms from the text) and abstractive keywords (higher-level concepts or themes). The text involves emails sent by customers to companies either inquiring about information or submitting complaints. The objective is to utilize these keywords for topic modeling, trend detection, and classification. Note: This prompt will be used for multiple documents, so ensure that abstractive keywords remain cohesive and consistent across different texts.
-    #
-    # Follow these steps:
-    #
-    # Extract the extractive keywords directly from the text.
-    # Identify the abstractive keywords based on the themes or overarching concepts.
-    # Remove extractive keywords that are too specific or generic for generalization.
-    # Match each extractive keyword to its corresponding abstractive keyword.
-    # Provide a one-line summary that explains the meaning of each abstractive keyword to help match other keywords with similar meanings.
-    # Ensure the output is easily parsable in the following format:
-    #
-    # <\extractive>
-    # [Comma-separated extractive keywords]
-    # <\extractive>
-    #
-    # <\abstractive>
-    # [Comma-separated abstractive keywords]
-    # <\abstractive>
-    #
-    # <\abstractive-extractive>
-    # [(Tuple of extractive keyword - abstractive keyword)]
-    # <\abstractive-extractive>
-    #
-    # <\summary>
-    # [One-line summary for each abstractive keyword separated by * delimiter]
-    # <\summary>
-    #
-    #
-    # <|eot_id|><|start_header_id|>user<|end_header_id|>
-    #
-    # Email: I called the customer service number and spoke with Katie before applying for a Value City Card to ask if I apply would I save the 10% and she even asked what item was I was trying to buy, which I told her the Gramercy Park bedroom set, she looked it up and said it was a door buster, and I ask if I apply for the card will I still get the 10% which she said yes. When I placed the order online the 10% was not reflected so I called back to the 1-888-751-8553, and spoke with another young Lady who said that the 10 % did not apply to what I ordered and who did I speak with at first that said that. I did not recall the young ladies name, but asked to speak to a manager to which Olivia took the call. She said forturnaly the call are recored, I said ok good, because I knew what I was quoted. First she said she did not find a call from the numbers I provided, and I told her I was calling from work and we had various lines. I gave her another number to which she found the number I called from 843-398-4000 @ 9:12 was the first call to ask if I would get the 10% off if I applied for the card, to which she said yes, after looking up the item I was trying to get. Ms. Olivia acted as if I was lying about even calling in at first, then when she did see that I called, she said she would listen to the call and reach back out to me. When she reached back out she said it was a misunderstanding and the 10% was not offered. I told her that was not the truth I know that was the reason I even called in and asked to hear the call for myself and she said she could not let me hear the call, but it was my own voice being recorded and if you was in the right why would you not let me hear the call? I am very upset because I would not have applied for this card other than to save the 10%. Now is this is how yall conduct business I do not want no parts of it and I will cancel my order and this card. I know what I was told on the call becasue it was my reason for making the first call and I would not have applied if she said that it did not apply to what I was getting. Now I will take the next step in this matter and go as far as I need to because I know what I was told and what was said on the call. I did not need this card and only applied because she said I would save the additional 10% off. In stead of saying we made a mistake and we will try to fix it, I was made out to be a liar to which I am not happy with. I need somone from cooperate office to reach out to me as soon as possible. I could have use my own credit card and got cash back on my card but only use this one because I was told I could save the additional. Thanks for looking into this matter.
-    # "{}"<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
-
     output = llm._generate([prompt])
     print(output.generations[0][0].text)    
