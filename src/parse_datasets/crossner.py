@@ -1,7 +1,7 @@
 from pathlib import Path
 from .common_utils import *
 from config import NERDataPoint, NERMolecule
-
+from .crossner_utils import *
 
 def reformat_dataset(dataset, labels):
     reformated_dataset = []
@@ -17,6 +17,10 @@ def reformat_dataset(dataset, labels):
     return reformated_dataset
 
 
+
+
+
+
 def get_crossner(dataset_name: str, **kwargs):
     """Parses and generate crossner dataset in a specific format"""
     dataset_name = dataset_name.lower()
@@ -27,6 +31,17 @@ def get_crossner(dataset_name: str, **kwargs):
         "CrossNER_politics": "crossner_politics",
         "CrossNER_science": "crossner_science"
     }
+
+    desc_labels = {
+        "crossner_ai": crossner_ai_labels_and_desc(),
+        "crossner_literature": crossner_lit_labels_and_desc(),
+        "crossner_music": crossner_music_labels_and_desc(),
+        "crossner_politics": crossner_politics_labels_and_desc(),
+        "crossner_science": crossner_natural_science_labels_and_desc()
+    }
+
+    common_label = common_labels()
+
     name_mapper = {value: key for key, value in name_mapper.items()}
 
     datafolder = kwargs['datafolder']
@@ -36,23 +51,22 @@ def get_crossner(dataset_name: str, **kwargs):
     dev_dataset = reformat_dataset(dev_dataset, labels)
     test_dataset = reformat_dataset(test_dataset, labels)
 
+    desc, dataset_specific_labels = desc_labels[dataset_name]
 
-    if kwargs["number_of_ner"]:
-        k = kwargs["number_of_examples"]
-        custom_split = []
-        for i in test_dataset+dev_dataset+train_dataset:
-            if kwargs["number_of_ner"][0] <= len(i.ners) <= kwargs["number_of_ner"][1]:
-                custom_split.append(i)
-            if len(custom_split) == k:
-                break
-
-        test_dataset = custom_split
+    final_labels = {}
+    for label in labels:
+        if label in common_label:
+            final_labels[label] = common_label[label]
+        else:
+            final_labels[label] = dataset_specific_labels[label]
 
     return {
         "train": train_dataset,
         "dev": dev_dataset,
-        "test": test_dataset[:kwargs["number_of_examples_for_original_dataset"]],
+        "test": test_dataset,
         "extra": {"theme": dataset_name.split("_")[1],
                   "name": dataset_name,
-                  "labels": labels}
+                  "labels": final_labels,
+                  "desc": desc
+                  }
     }

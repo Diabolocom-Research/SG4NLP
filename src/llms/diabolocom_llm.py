@@ -10,7 +10,7 @@ from transformers import AutoTokenizer
 from langchain_core.runnables import Runnable
 from langchain_core.outputs import Generation, LLMResult
 from langchain_core.callbacks import CallbackManagerForLLMRun
-from llm_abstraction import BaseLLM
+from .llm_abstraction import BaseLLM
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
