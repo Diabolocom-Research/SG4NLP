@@ -37,8 +37,8 @@ class Dataset:
 
 @dataclass
 class LLMConfig:
-    llm_server: str = "diabolocom"
-    model_name: str = "llama3-70B"
+    llm_server: str = "openai" # openai, diabolocom
+    model_name: str = "gpt-4o-mini" # llama3-70B
     caching: bool = True
     redis_port: int = 6379
     redis_host: str = "localhost"
