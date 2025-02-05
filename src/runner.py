@@ -21,6 +21,8 @@ from src.parse_datasets import dataset_parser
 
 
 from dataclasses import asdict
+from llms import llm_creation # custom module for internal LLM endpoint
+
 
 def get_dataset(dataset_params: Dataset, generate_dataset_params: Optional[GenerateDataset] = None):
     """Here we will after all the process read the dataset
@@ -96,10 +98,25 @@ def benchmark_orch(benchmark_runner_arguments: BenchmarkRunnerArguments):
         r = ""
 
 
-    dataset_params =benchmark_runner_arguments.dataset_params
+    dataset_params = benchmark_runner_arguments.dataset_params
     generate_dataset_params = benchmark_runner_arguments.generate_dataset_params
 
     dataset = get_dataset(dataset_params=dataset_params, generate_dataset_params=generate_dataset_params)
+
+    # need to create llm factory
+    config = {
+        "model_name": "llama3",
+        "redis_host": "localhost",
+        "redis_port": 6379,
+        "project_string": "test",
+        "temperature": 0.0,
+    }
+
+    llm_type = "diabolocom"
+
+    # Create LLM instance using the factory.
+    llm_factory = llm_creation.LLMFactory()
+    llm_adapter = llm_factory.create_llm(llm_type, config)
 
 
     method_params = {
@@ -115,7 +132,8 @@ def benchmark_orch(benchmark_runner_arguments: BenchmarkRunnerArguments):
         "number_of_examples": benchmark_runner_arguments.number_of_examples,
         "redis_client": r,
         "use_redis_caching": benchmark_runner_arguments.use_redis_caching,
-        "number_of_ner": benchmark_runner_arguments.number_of_ner
+        "number_of_ner": benchmark_runner_arguments.number_of_ner,
+        "llm_adapter": llm_adapter
 
     }
 
@@ -128,10 +146,11 @@ def benchmark_orch(benchmark_runner_arguments: BenchmarkRunnerArguments):
             evaluator = Evaluator([[i.__dict__ for i in d.ners] for d in
                                    dataset[benchmark_runner_arguments.split]],
                                   [[i.__dict__ for i in d.ners] for d in
-                                   preds[benchmark_runner_arguments.split]],
+                                   preds],
                                   tags=dataset["test"][0].labels)
 
             results, results_per_tag, result_indices, result_indices_by_tag = evaluator.evaluate()
+            print(results)
         except ValueError:
             print(benchmark_runner_arguments)
             raise IOError
