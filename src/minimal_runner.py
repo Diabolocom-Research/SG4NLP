@@ -1,10 +1,14 @@
 '''The orchestrator which does all the heavy lifting by calling various sub modules'''
 import random
+from dataclasses import asdict
+from pprint import pprint
+
 import numpy as np
 from dotenv import load_dotenv
-from dataclasses import asdict
-from llms import llm_creation
+from nervaluate import Evaluator
+
 from src.config import *
+from src.methods import get_predictions
 from src.parse_datasets import dataset_parser
 
 
@@ -26,12 +30,6 @@ def get_dataset(dataset_params: Dataset, generated_dataset_params: Optional[Gene
             dataset['test'] = dataset["test"][:dataset_params.number_of_test_examples]
         return dataset
 
-
-def get_llm_adapter(llm_config: LLMConfig):
-    # Create LLM instance using the factory.
-    llm_factory = llm_creation.LLMFactory()
-    llm_adapter = llm_factory.create_llm(llm_config)
-    return llm_adapter
 
 def set_seed(seed=42):
     random.seed(seed)
@@ -55,19 +53,32 @@ def benchmark_orch(
 
     set_seed(benchmark_params.seed)
 
-
     # retrieve dataset
     dataset = get_dataset(dataset_params=dataset_params, generated_dataset_params=generated_dataset_params)
 
     # retrieve the llm if the methods uses llm
-    if method_params.method == "llm":
-        llm_adapter = get_llm_adapter(method_params.method_specific_params["llm_config"])
+    # if method_params.method == "llm":
+    #     llm_adapter = get_llm_adapter(method_params.method_specific_params["llm_config"])
 
     # method specific arguments
+    method_params.method_specific_params['splits'] = benchmark_params.split  # for legacy reason
+    method_params.method_specific_params['task'] = benchmark_params.task  # for legacy reason
+    preds = get_predictions.predictions(method_name=method_params.method, dataset=dataset,
+                                        **method_params.method_specific_params)
+
+    # evaluate the predictions
+    evaluator = Evaluator([[i.__dict__ for i in d.ners] for d in
+                           dataset[benchmark_params.split]],
+                          [[i.__dict__ for i in d.ners] for d in
+                           preds],
+                          tags=dataset[benchmark_params.split][0].labels)
+
+    results, results_per_tag, result_indices, result_indices_by_tag = evaluator.evaluate()
+    pprint(results)
 
 
 if __name__ == "__main__":
-    dataset_params = Dataset(name="crossner_politics", number_of_test_examples=200)
+    dataset_params = Dataset(name="crossner_politics", number_of_test_examples=50)
     generated_dataset_params = None
     llm_config = LLMConfig()
     method_params = MethodArguments()

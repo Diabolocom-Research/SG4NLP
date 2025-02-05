@@ -1,5 +1,8 @@
 '''Set of utility function. Primarily redis caching layer'''
 import time
+from config import LLMConfig
+from llms import llm_creation
+
 
 def caching_layer(model_name, model_temperature, message, llm, redis_cli,
                   use_redis_caching):
@@ -23,3 +26,10 @@ def caching_layer(model_name, model_temperature, message, llm, redis_cli,
             output = output.content
         redis_cli.set(composite_key, output)
         return output
+
+
+def get_llm_adapter(llm_config: LLMConfig):
+    # Create LLM instance using the factory.
+    llm_factory = llm_creation.LLMFactory()
+    llm_adapter = llm_factory.create_llm(llm_config)
+    return llm_adapter

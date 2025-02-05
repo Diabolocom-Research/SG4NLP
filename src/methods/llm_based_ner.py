@@ -1,5 +1,6 @@
 import re
 from tqdm.auto import tqdm
+from utils import get_llm_adapter
 from typing import List, Dict, Any
 from config import NERDataPoint, NERMolecule
 from langchain_core.output_parsers import PydanticOutputParser
@@ -55,8 +56,9 @@ def generate_dynamic_response_schema(labels: Dict[str, str]) -> BaseModel:
 
 
 def get_predictions_over_dataset(dataset, **kwargs):
-    llm_adapter = kwargs["llm_adapter"]
+    llm_adapter = get_llm_adapter(kwargs["llm_config"])
     splits = kwargs["splits"]
+
 
     all_preds = []
     for i in tqdm(range(len(dataset[splits])), desc="llm based ner"):
