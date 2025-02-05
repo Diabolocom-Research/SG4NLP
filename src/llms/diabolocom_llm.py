@@ -209,7 +209,8 @@ class DiabolocomLLMAdapter(BaseLLM):
             model_name: str,
             redis_client: redis.Redis,
             project_string: str,
-            temperature: float = 0.0
+            temperature: float = 0.0,
+            use_redis_caching:bool = True
     ):
         self.model_name = model_name
         self.redis_client = redis_client
@@ -227,7 +228,10 @@ class DiabolocomLLMAdapter(BaseLLM):
             project_string=self.project_string
         )
         try:
-            self.tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.3-70B-Instruct")
+            if "llama" in self.model_name.lower():
+                self.tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.3-70B-Instruct")
+            else:
+                raise NotImplementedError
         except Exception as e:
             logger.error("Failed to load tokenizer: %s", e)
             raise

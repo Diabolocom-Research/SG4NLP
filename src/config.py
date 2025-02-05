@@ -2,9 +2,9 @@
 The file provides data class specifing interface for input/output
 '''
 
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional
-from dataclasses import dataclass, field
 
 DATA_FOLDER = Path("../data")
 MLFLOW_URI = "http://127.0.0.1:8080"
@@ -28,13 +28,22 @@ claude_llm = ["claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"]
 big_llm_list = gpt_llm + claude_llm + anyscale_llm
 
 
-
-
 @dataclass
 class Dataset:
     name: str = "crossner_politics"
-    number_of_test_examples: int = 200  # These are the number of examples used for testing
+    number_of_test_examples: int = 200  # These are the number of examples used for testing; Use -1 for the whole dataset!
     dataset_specific_params: Optional[dict] = field(default=None)
+
+
+@dataclass
+class LLMConfig:
+    llm_server: str = "diabolocom"
+    model_name: str = "llama3-70B"
+    caching: bool = True
+    redis_port: int = 6379
+    redis_host: str = "localhost"
+    project_string: str = llm_server + model_name
+    temperature: float = 0.0 # Note that the caching only works for temp 0.0
 
 
 @dataclass
@@ -43,17 +52,15 @@ class GenerateDataset:
     llm_for_generation: str = "llama3:70b"
     k_shot: int = 2  # Number of examples per class used for generating dataset
     number_of_examples_to_generate: int = field(init=False)  # Number of examples to generate
+
     def __post_init__(self):
         self.number_of_examples_to_generate = self.dataset.number_of_test_examples
-
-
-
 
 
 @dataclass
 class BenchmarkRunnerArguments:
     """Input arguments for the benchmark runner i.e files which runs the llm over the task"""
-    use_mlflow: bool = False # Starts the ML flow logging
+    use_mlflow: bool = False  # Starts the ML flow logging
     run_id: int = 0
     dataset: str = "crossner_literature"
     method: str = "mistralai/Mixtral-8x7B-Instruct-v0.1"  # huggingface_bart_large, mistralai/Mixtral-8x7B-Instruct-v0.1
@@ -62,18 +69,19 @@ class BenchmarkRunnerArguments:
     llm: str = "mistralai/Mixtral-8x7B-Instruct-v0.1"
     k_shot: int = 5
     number_of_examples: int = 10
-    generated: bool = True # specifies if the user wants to use the generated data or original data
+    generated: bool = True  # specifies if the user wants to use the generated data or original data
     seed: int = 42
     task: str = "ner"
     number_of_examples_per_intent: int = 5
-    use_redis_caching: bool = True # We are using reddis to cache responses from the llm to save some cost
+    use_redis_caching: bool = True  # We are using reddis to cache responses from the llm to save some cost
     port: int = 6379
     number_of_ner: Optional[set] = None  # Specifies number of examples used for generating ner examples
-    number_of_examples_per_score: int = 5 # Specifies number of examples used per score generating text similarity examples
-    number_of_examples_for_original_dataset: int = 10 # Specifies number of examples used per score generating text similarity examples
+    number_of_examples_per_score: int = 5  # Specifies number of examples used per score generating text similarity examples
+    number_of_examples_for_original_dataset: int = 10  # Specifies number of examples used per score generating text similarity examples
 
     dataset_params: Dataset = field(default_factory=lambda: Dataset())
     generate_dataset_params: Optional[GenerateDataset] = field(default=None)
+
 
 @dataclass
 class GenerateRunnerArguments:
