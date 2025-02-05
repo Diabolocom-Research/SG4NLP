@@ -1,15 +1,16 @@
-import os
 import logging
-import redis
-import requests
+import os
 from functools import partial
 from typing import Any, List, Dict, Optional
 
+import redis
+import requests
 from dotenv import load_dotenv
-from transformers import AutoTokenizer
-from langchain_core.runnables import Runnable
-from langchain_core.outputs import Generation, LLMResult
 from langchain_core.callbacks import CallbackManagerForLLMRun
+from langchain_core.outputs import Generation, LLMResult
+from langchain_core.runnables import Runnable
+from transformers import AutoTokenizer
+
 from .llm_abstraction import BaseLLM
 
 # Configure logging
@@ -210,7 +211,7 @@ class DiabolocomLLMAdapter(BaseLLM):
             redis_client: redis.Redis,
             project_string: str,
             temperature: float = 0.0,
-            use_redis_caching:bool = True
+            use_redis_caching: bool = True
     ):
         self.model_name = model_name
         self.redis_client = redis_client
@@ -224,7 +225,7 @@ class DiabolocomLLMAdapter(BaseLLM):
             model_temperature=self.temperature,
             llm=self.llm_ep,
             redis_cli=self.redis_client,
-            use_redis_caching=True,
+            use_redis_caching=use_redis_caching,
             project_string=self.project_string
         )
         try:
