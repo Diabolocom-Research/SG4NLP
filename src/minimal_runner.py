@@ -1,7 +1,8 @@
 '''The orchestrator which does all the heavy lifting by calling various sub modules'''
-
+import random
+import numpy as np
+from dotenv import load_dotenv
 from dataclasses import asdict
-
 from llms import llm_creation
 from src.config import *
 from src.parse_datasets import dataset_parser
@@ -32,10 +33,16 @@ def get_llm_adapter(llm_config: LLMConfig):
     llm_adapter = llm_factory.create_llm(llm_config)
     return llm_adapter
 
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
 
-def benchmark_orch(dataset_params: Dataset,
-                   llm_config: LLMConfig,
-                   generated_dataset_params: Optional[GenerateDataset] = None):
+
+def benchmark_orch(
+        benchmark_params: MinimalBenchmarkArguments,
+        dataset_params: Dataset,
+        method_params: MethodArguments,
+        generated_dataset_params: Optional[GenerateDataset] = None):
     """
     - Pass None, if one does not want to use the generated dataset
     - Get the appropriate dataset by setting the right params and sending it to the function
@@ -44,17 +51,27 @@ def benchmark_orch(dataset_params: Dataset,
     - Store all the config, predictions, and results in one place or folder for later retrival
     """
 
+    load_dotenv()
+
+    set_seed(benchmark_params.seed)
+
+
     # retrieve dataset
     dataset = get_dataset(dataset_params=dataset_params, generated_dataset_params=generated_dataset_params)
 
-    # retrieve the llm
-    llm_adapter = get_llm_adapter(llm_config)
-    # need to create llm factory
+    # retrieve the llm if the methods uses llm
+    if method_params.method == "llm":
+        llm_adapter = get_llm_adapter(method_params.method_specific_params["llm_config"])
+
+    # method specific arguments
 
 
 if __name__ == "__main__":
     dataset_params = Dataset(name="crossner_politics", number_of_test_examples=200)
     generated_dataset_params = None
     llm_config = LLMConfig()
-    benchmark_orch(dataset_params=dataset_params, llm_config=llm_config,
+    method_params = MethodArguments()
+    benchmark_params = MinimalBenchmarkArguments()
+
+    benchmark_orch(benchmark_params=benchmark_params, dataset_params=dataset_params, method_params=method_params,
                    generated_dataset_params=generated_dataset_params)

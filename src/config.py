@@ -58,6 +58,21 @@ class GenerateDataset:
 
 
 @dataclass
+class MinimalBenchmarkArguments:
+    split: str = "test"
+    use_mlflow: bool = False  # Starts the ML flow logging
+    generated: bool = True  # We set it two ways. So there is a bi-directional binding
+    seed: int = 42
+    task: str = "ner"
+
+@dataclass
+class MethodArguments:
+    method: str = "llm"  # huggingface_bart_large, mistralai/Mixtral-8x7B-Instruct-v0.1
+    method_specific_params: Optional[dict] = field(default_factory=lambda: {"llm_config": LLMConfig()})
+
+
+
+@dataclass
 class BenchmarkRunnerArguments:
     """Input arguments for the benchmark runner i.e files which runs the llm over the task"""
     use_mlflow: bool = False  # Starts the ML flow logging
