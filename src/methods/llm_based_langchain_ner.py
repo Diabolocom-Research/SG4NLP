@@ -9,7 +9,7 @@ import traceback
 import numpy as np
 from src.config import *
 from tqdm.auto import tqdm
-from src.utils import caching_layer
+# from src.utils import caching_layer
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_community.llms import Anyscale

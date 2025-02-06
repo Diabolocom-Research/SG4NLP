@@ -1,4 +1,4 @@
-'''The orchestrator which does all the heavy lifting by calling various sub modules'''
+'''The orchestrator which does all the heavy lifting by calling various submodules'''
 import random
 from dataclasses import asdict
 from pprint import pprint
@@ -7,9 +7,9 @@ import numpy as np
 from dotenv import load_dotenv
 from nervaluate import Evaluator
 
-from src.config import *
-from src.methods import get_predictions
-from src.parse_datasets import dataset_parser
+from config import *
+from methods import get_predictions
+from parse_datasets import dataset_parser
 
 
 def get_dataset(dataset_params: Dataset, generated_dataset_params: Optional[GenerateDataset] = None):
