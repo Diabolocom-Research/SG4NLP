@@ -1,9 +1,10 @@
 '''The orchestrator which does all the heavy lifting by calling various submodules'''
+import os
 import random
 from dataclasses import asdict
-from pathlib import Path
 from pprint import pprint
 
+import mlflow
 import numpy as np
 import shortuuid
 from dotenv import load_dotenv
@@ -25,7 +26,8 @@ def get_dataset(dataset_params: Dataset, generated_dataset_params: Optional[Gene
     if generated_dataset_params:
         # here it would mostly be finding the right config based on the arguments and then retrieve the dataset
         llm_config = llm_config_generator(llm_name=generated_dataset_params.llm_for_generation, temperature=0.0)
-        dataset = retrive_generated_dataset(dataset_params, generated_dataset_params, llm_config, path=Path("../data/generated/v2"))[0]
+        dataset = retrive_generated_dataset(dataset_params, generated_dataset_params, llm_config,
+                                            path=Path("../data/generated/v2"))[0]
     else:
         params = asdict(dataset_params)
         params['generated'] = False
@@ -82,6 +84,29 @@ def benchmark_orch(
     results, results_per_tag, result_indices, result_indices_by_tag = evaluator.evaluate()
     pprint(results)
 
+    if benchmark_params.use_mlflow:
+        project_dir = os.getcwd()
+        parent_dir = os.path.dirname(project_dir)
+        mlflow_dir = os.path.join(parent_dir, "mlflow_v2")
+        mlflow.set_tracking_uri("file://" + mlflow_dir)
+        print("MLflow tracking URI set to:", mlflow.get_tracking_uri())
+        uuid = shortuuid.uuid()
+        with mlflow.start_run():
+            mlflow.set_tag("mlflow.runName",
+                           f"{benchmark_params.task}__{uuid[:6]}")
+            mlflow.log_params(benchmark_params.__dict__)
+            mlflow.log_params(dataset_params.__dict__)
+            mlflow.log_params(method_params.__dict__)
+            if generated_dataset_params:
+                mlflow.log_params(generated_dataset_params.__dict__)
+            flatten_results = {}
+
+            for result_type, result_value in results.items():
+                for key, value in result_value.items():
+                    flatten_results[f"{result_type}_{key}"] = value
+
+            mlflow.log_metrics(flatten_results)
+
 
 def generate_dataset_orch(dataset_params: Dataset,
                           generate_dataset_params: GenerateDataset):
@@ -117,7 +142,3 @@ if __name__ == "__main__":
     # generated_dataset_params = GenerateDataset(dataset=dataset_params, llm_for_generation="llama-3.1-70b-q4", k_shot=5)
     # id = generate_dataset_orch(dataset_params=dataset_params, generate_dataset_params=generated_dataset_params)
     # print(id)
-
-
-
-
