@@ -52,6 +52,7 @@ class GenerateDataset:
     llm_for_generation: str = "llama3:70b"
     k_shot: int = 2  # Number of examples per class used for generating dataset
     number_of_examples_to_generate: int = field(init=False)  # Number of examples to generate
+    generated_dataset_specific_params: Optional[dict] = field(default=None)
 
     def __post_init__(self):
         self.number_of_examples_to_generate = self.dataset.number_of_test_examples

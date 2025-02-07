@@ -58,7 +58,7 @@ def llm_config_generator(llm_name="gpt-4o", temperature=0.0):
     return llm_config
 
 
-def store_dataclasses(instances: dict, file_path: str) -> None:
+def store_dataclasses(instances: dict, file_path: Path) -> None:
     """
     Stores a dictionary of dataclass instances to a file using pickle.
 

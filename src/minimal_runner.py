@@ -13,7 +13,7 @@ from config import *
 from generate_datasets import llm_based_ner
 from methods import get_predictions
 from parse_datasets import dataset_parser
-from utils import llm_config_generator, store_dataclasses
+from utils import llm_config_generator, store_dataclasses, retrive_generated_dataset
 
 
 def get_dataset(dataset_params: Dataset, generated_dataset_params: Optional[GenerateDataset] = None):
@@ -24,15 +24,17 @@ def get_dataset(dataset_params: Dataset, generated_dataset_params: Optional[Gene
 
     if generated_dataset_params:
         # here it would mostly be finding the right config based on the arguments and then retrieve the dataset
-        raise NotImplementedError
+        llm_config = llm_config_generator(llm_name=generated_dataset_params.llm_for_generation, temperature=0.0)
+        dataset = retrive_generated_dataset(dataset_params, generated_dataset_params, llm_config, path=Path("../data/generated/v2"))[0]
     else:
         params = asdict(dataset_params)
         params['generated'] = False
         params["datafolder"] = DATA_FOLDER
         dataset = dataset_parser.get_dataset(dataset_name=dataset_params.name, **params)
-        if dataset_params.number_of_test_examples != -1:
-            dataset['test'] = dataset["test"][:dataset_params.number_of_test_examples]
-        return dataset
+
+    if dataset_params.number_of_test_examples != -1:
+        dataset['test'] = dataset["test"][:dataset_params.number_of_test_examples]
+    return dataset
 
 
 def set_seed(seed=42):
@@ -105,16 +107,16 @@ def generate_dataset_orch(dataset_params: Dataset,
 
 if __name__ == "__main__":
     dataset_params = Dataset(name="crossner_politics", number_of_test_examples=50)
-    generated_dataset_params = None
+    generated_dataset_params = GenerateDataset(dataset=dataset_params, llm_for_generation="llama-3.1-70b-q4", k_shot=5)
     llm_config = LLMConfig()
     method_params = MethodArguments()
     benchmark_params = MinimalBenchmarkArguments()
-    # benchmark_orch(benchmark_params=benchmark_params, dataset_params=dataset_params, method_params=method_params,
-    #                generated_dataset_params=generated_dataset_params)
+    benchmark_orch(benchmark_params=benchmark_params, dataset_params=dataset_params, method_params=method_params,
+                   generated_dataset_params=generated_dataset_params)
 
-    generated_dataset_params = GenerateDataset(dataset=dataset_params, llm_for_generation="llama-3.1-70b-q4", k_shot=5)
-    id = generate_dataset_orch(dataset_params=dataset_params, generate_dataset_params=generated_dataset_params)
-    print(id)
+    # generated_dataset_params = GenerateDataset(dataset=dataset_params, llm_for_generation="llama-3.1-70b-q4", k_shot=5)
+    # id = generate_dataset_orch(dataset_params=dataset_params, generate_dataset_params=generated_dataset_params)
+    # print(id)
 
 
 
