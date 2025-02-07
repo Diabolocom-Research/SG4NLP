@@ -14,10 +14,10 @@ from sklearn.metrics import mean_squared_error as mse
 from sklearn.preprocessing import LabelBinarizer
 
 from config import Dataset, GenerateDataset
-from src.config import *
-from src.generate_datasets import generate_datasets
-from src.methods import get_predictions
-from src.parse_datasets import dataset_parser
+from config import *
+from generate_datasets import generate_datasets
+from methods import get_predictions
+from parse_datasets import dataset_parser
 
 
 from dataclasses import asdict

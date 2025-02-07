@@ -1,6 +1,6 @@
 import os
 import pickle
-from src.config import *
+from config import *
 from gliner import GLiNER
 from tqdm.auto import tqdm
 

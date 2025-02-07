@@ -1,8 +1,8 @@
-import src.generate_datasets.llm_based as mixtral
-import src.generate_datasets.llm_based_langchain_ner as llm_langchain_ner
-import src.generate_datasets.llm_based_langchain_intent as llm_langchain_intent
-import src.generate_datasets.llm_based_langchain_text_similarity as llm_text_similarity
-from src.config import big_llm_list
+import generate_datasets.llm_based as mixtral
+import generate_datasets.llm_based_langchain_ner as llm_langchain_ner
+import generate_datasets.llm_based_langchain_intent as llm_langchain_intent
+import generate_datasets.llm_based_langchain_text_similarity as llm_text_similarity
+from config import big_llm_list
 def router(llm, dataset, **kwargs):
 
 

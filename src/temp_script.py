@@ -159,7 +159,7 @@ def main(text: str, llm_type: str = "diabolocom"):
 
 
 
-from src.parse_datasets import dataset_parser
+from parse_datasets import dataset_parser
 
 def get_dataset():
 

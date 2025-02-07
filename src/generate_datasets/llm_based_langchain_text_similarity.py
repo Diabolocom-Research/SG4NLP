@@ -8,7 +8,7 @@ from tqdm.auto import tqdm
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_community.llms import Anyscale
-from src.config import TextSimilarityDataPoint, anyscale_llm, gpt_llm, claude_llm
+from config import TextSimilarityDataPoint, anyscale_llm, gpt_llm, claude_llm
 
 
 # def clean_output(text):

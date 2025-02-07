@@ -4,11 +4,11 @@ import pickle
 import random
 from pathlib import Path
 from tqdm.auto import tqdm
-from src.config import IntentDataPoint
+from config import IntentDataPoint
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_community.llms import Anyscale
-from src.config import gpt_llm, claude_llm, anyscale_llm
+from config import gpt_llm, claude_llm, anyscale_llm
 
 def clean_output(text):
     pattern = r'generated_text>(.*?)</generated_text'

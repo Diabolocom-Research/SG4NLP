@@ -7,13 +7,13 @@ import time
 import pickle
 import traceback
 import numpy as np
-from src.config import *
+from config import *
 from tqdm.auto import tqdm
 # from src.utils import caching_layer
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_community.llms import Anyscale
-from src.config import gpt_llm, claude_llm, anyscale_llm
+from config import gpt_llm, claude_llm, anyscale_llm
 
 # system_prompt = '''Your goal is to extract the following metadata from the user text:
 #

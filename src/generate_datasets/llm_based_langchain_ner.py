@@ -13,7 +13,7 @@ from langchain_openai import ChatOpenAI
 from config import NERMolecule, NERDataPoint
 from langchain_anthropic import ChatAnthropic
 from langchain_community.llms import Anyscale
-from src.config import gpt_llm, claude_llm, anyscale_llm
+from config import gpt_llm, claude_llm, anyscale_llm
 
 
 def label_message(dataset_theme, label_type):

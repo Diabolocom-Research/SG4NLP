@@ -5,7 +5,7 @@ from .llm_based_langchain_intent import runner as langchain_intent
 from .zero_shot_intent_recognition import runner as zero_shot_runner
 from .llm_based_langchain_text_similarity import runner as langchain_text_similarity
 from .llm_based_ner import get_predictions_over_dataset
-from src.config import big_llm_list
+from config import big_llm_list
 
 
 def predictions(method_name, dataset, **kwargs):

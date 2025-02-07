@@ -3,7 +3,7 @@ import os
 import pickle
 import requests
 import traceback
-from src.config import *
+from config import *
 from pathlib import Path
 from tqdm.auto import tqdm
 from dotenv import load_dotenv
