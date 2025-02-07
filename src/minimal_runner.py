@@ -10,7 +10,8 @@ from nervaluate import Evaluator
 from config import *
 from methods import get_predictions
 from parse_datasets import dataset_parser
-
+from generate_datasets import llm_based_ner
+from utils import llm_config_generator, get_llm_adapter
 
 def get_dataset(dataset_params: Dataset, generated_dataset_params: Optional[GenerateDataset] = None):
     """Here we will after all the process read the dataset
@@ -76,6 +77,12 @@ def benchmark_orch(
     results, results_per_tag, result_indices, result_indices_by_tag = evaluator.evaluate()
     pprint(results)
 
+
+def generate_dataset_orch(dataset_params: Dataset,
+                          generate_dataset_params: GenerateDataset):
+    dataset = get_dataset(dataset_params, None)
+    llm_config = llm_config_generator(llm_name=generate_dataset_params.llm_for_generation, temperature=0.5)
+    llm_based_ner.generate_dataset(dataset=dataset, generated_dataset_params=generated_dataset_params, llm_config=llm_config)
 
 if __name__ == "__main__":
     dataset_params = Dataset(name="crossner_politics", number_of_test_examples=50)

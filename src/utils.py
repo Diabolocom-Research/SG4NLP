@@ -1,5 +1,6 @@
 '''Set of utility function. Primarily redis caching layer'''
 import time
+
 from config import LLMConfig
 from llms import llm_creation
 
@@ -33,3 +34,22 @@ def get_llm_adapter(llm_config: LLMConfig):
     llm_factory = llm_creation.LLMFactory()
     llm_adapter = llm_factory.create_llm(llm_config)
     return llm_adapter
+
+
+def llm_config_generator(llm_name="gpt-4o", temperature=0.0):
+    """It is a helper class which creates llm config based on the name"""
+
+    if llm_name.lower() in ["gpt-4o", "gpt-4o-mini"]:
+        project_string = "openai" + llm_name
+        llm_config = LLMConfig(llm_server="openai", model_name=llm_name, caching=True, redis_port=6379,
+                               redis_host="localhost", project_string=project_string, temperature=temperature)
+
+    elif llm_name.lower() in ["llama-3.1-70b-q4"]:
+        project_string = "diabolocom" + llm_name
+        llm_config = LLMConfig(llm_server="diabolocom", model_name=llm_name, caching=True, redis_port=6379,
+                               redis_host="localhost", project_string=project_string, temperature=temperature)
+
+    else:
+        raise NotImplementedError
+
+    return llm_config
