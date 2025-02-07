@@ -2,7 +2,7 @@
 import pickle
 import time
 from pathlib import Path
-from typing import List, Any
+from typing import List, Any, Optional
 
 from config import LLMConfig, Dataset, GenerateDataset
 from llms import llm_creation
@@ -90,7 +90,7 @@ def load_dataclasses(file_path: str) -> dict:
 def retrive_generated_dataset(dataset_params: Dataset,
                               generated_dataset_params: GenerateDataset,
                               llm_config: LLMConfig,
-                              path: Path) -> List[Any]:
+                              path: Path) -> Optional[List[Any]]:
     """
     Iterates over all pickle files in the given directory and returns a list of
     generated datasets from the files whose stored parameters match the provided ones.
@@ -129,6 +129,9 @@ def retrive_generated_dataset(dataset_params: Dataset,
             matching_items.append((mod_time, data.get("generated_dataset")))
 
     # Sort by modification time in descending order (latest file first)
+
+    if len(matching_items) == 0:
+        return None
     matching_items.sort(key=lambda x: x[0], reverse=True)
 
     # Extract and return only the generated_dataset objects
