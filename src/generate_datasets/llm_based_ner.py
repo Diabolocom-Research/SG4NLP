@@ -13,6 +13,31 @@ from minimal_runner import get_dataset
 from utils import get_llm_adapter
 
 
+def custom_extract_lables(text: str) -> List[str]:
+    """
+    Extracts all quoted elements from the "examples" list in a truncated JSON string.
+
+    This function first searches for the part of the text that follows the '"examples": [' substring.
+    Then, it finds all substrings enclosed in double quotes within that part.
+
+    Args:
+        text (str): The input string containing the truncated JSON.
+
+    Returns:
+        List[str]: A list of extracted example strings.
+    """
+    # Look for the part of the text after '"examples": [' (allowing for optional whitespace)
+    match = re.search(r'"examples"\s*:\s*\[(.*)', text)
+    if match:
+        # Extract everything after the '['
+        inside_array = match.group(1)
+        # Find all occurrences of text within double quotes inside the extracted part
+        examples = re.findall(r'"([^"]+)"', inside_array)
+        return examples
+    else:
+        return []
+
+
 def generate_labels(theme, ner_class, llm):
     system_prompt_for_label = (
         "You are a precise and detail-oriented Named Entity Recognition (NER) assistant. "
@@ -25,7 +50,7 @@ def generate_labels(theme, ner_class, llm):
     )
 
     user_prompt_for_label = (
-        "Generate 50 examples/labels belonging to the NER class {ner_class}.\n\n"
+        "Generate 25 examples/labels belonging to the NER class {ner_class}.\n\n"
         "Theme: {theme}"
         "Guidelines for generating examples/labels:\n"
         " - Follow the JSON schema exactly as specified: {format_instructions}\n"
@@ -52,11 +77,16 @@ def generate_labels(theme, ner_class, llm):
 
     output = llm.generate(final_prompt)
 
-    json_output_str = extract_json_from_output(output)
+    try:
+        json_output_str = extract_json_from_output(output)
+        json_output = parser_label.parse(json_output_str)
+        return json_output.examples
+    except ValueError:
+        return custom_extract_lables(text=output)
 
-    json_output = parser_label.parse(json_output_str)
 
-    return json_output.examples
+
+
 
 
 def generate_example_string(k_shot, dataset):
@@ -161,7 +191,7 @@ def generate_examples(generated_labels, dataset_labels, example_string,
     all_examples = []
     counter = 0
 
-    pbar = tqdm(total=number_of_examples)
+    pbar = tqdm(total=number_of_examples, desc="generating dataset")
     while len(all_examples) < number_of_examples:
         if counter > number_of_examples + 400:
             break
@@ -217,7 +247,7 @@ def generate_dataset(dataset, generated_dataset_params: GenerateDataset, llm_con
     llm = get_llm_adapter(llm_config=llm_config)
 
     all_generated_labels = {}
-    for label, label_desc in dataset['extra']['labels'].items():
+    for label, label_desc in tqdm(dataset['extra']['labels'].items(), desc="generating labels"):
         all_generated_labels[label] = generate_labels(theme=dataset['extra']['desc'], ner_class=label, llm=llm)
 
     example_string = generate_example_string(k_shot=5, dataset=dataset["train"])

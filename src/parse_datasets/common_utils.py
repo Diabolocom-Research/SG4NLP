@@ -23,6 +23,7 @@ def flatten_ner(tokenized_text, ner_list):
 
 
 def open_content(path):
+    print(path)
     paths = glob.glob(os.path.join(path, "*.json"))
     train, dev, test, labels = None, None, None, None
     for p in paths:
