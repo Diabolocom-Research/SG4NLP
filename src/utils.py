@@ -52,6 +52,12 @@ def llm_config_generator(llm_name="gpt-4o", temperature=0.0):
         llm_config = LLMConfig(llm_server="diabolocom", model_name=llm_name, caching=True, redis_port=6379,
                                redis_host="localhost", project_string=project_string, temperature=temperature)
 
+    elif llm_name.lower() in ["meta-llama/llama-3.1-70b-instruct", "mistralai/mixtral-8x22b-instruct",
+                              "anthropic/claude-3-haiku"]:
+        project_string = "diabolocom" + llm_name
+        llm_config = LLMConfig(llm_server="openrouter", model_name=llm_name, caching=True, redis_port=6379,
+                               redis_host="localhost", project_string=project_string, temperature=temperature)
+
     else:
         raise NotImplementedError
 

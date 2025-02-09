@@ -9,7 +9,7 @@ from tqdm.auto import tqdm
 
 from config import *
 from config import NERDataPoint, NERMolecule
-from minimal_runner import get_dataset
+# from minimal_runner import get_dataset
 from utils import get_llm_adapter
 
 
@@ -57,7 +57,7 @@ def generate_labels(theme, ner_class, llm):
         " - Include a mix of real and fictional names.\n"
         " - Ensure diversity in the list (e.g., different cultures, time periods, etc.).\n"
         " - Don't generate examples containing quotations or apostrophe.\n"
-        "Once again, you task is to generate 50 examples/labels belonging to the NER class {ner_class}. The theme of the text should be: {theme}\n\n"
+        "Once again, you task is to generate 25 examples/labels belonging to the NER class {ner_class}. The theme of the text should be: {theme}\n\n"
     )
 
     parser_label = PydanticOutputParser(pydantic_object=LabelsSchema)
@@ -277,7 +277,7 @@ if __name__ == "__main__":
     method_params = MethodArguments()
     benchmark_params = MinimalBenchmarkArguments()
 
-    dataset = get_dataset(dataset_params=dataset_params, generated_dataset_params=generated_dataset_params)
+    # dataset = get_dataset(dataset_params=dataset_params, generated_dataset_params=generated_dataset_params)
     generate_dataset(dataset, generated_dataset_params, llm_config)
 
     # # get the labels and desc

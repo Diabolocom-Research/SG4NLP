@@ -62,7 +62,6 @@ class GenerateDataset:
 class MinimalBenchmarkArguments:
     split: str = "test"
     use_mlflow: bool = True  # Starts the ML flow logging
-    generated: bool = True  # We set it two ways. So there is a bi-directional binding
     seed: int = 42
     task: str = "ner"
 

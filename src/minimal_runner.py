@@ -97,6 +97,7 @@ def benchmark_orch(
             mlflow.log_params(benchmark_params.__dict__)
             mlflow.log_params(dataset_params.__dict__)
             mlflow.log_params(method_params.__dict__)
+            mlflow.log_params(method_params.method_specific_params["llm_config"].__dict__)
             if generated_dataset_params:
                 mlflow.log_params(generated_dataset_params.__dict__)
             flatten_results = {}
@@ -113,13 +114,13 @@ def generate_dataset_orch(dataset_params: Dataset,
     dataset = get_dataset(dataset_params, None)
     llm_config = llm_config_generator(llm_name=generate_dataset_params.llm_for_generation, temperature=0.0)
     print("warning: do check temperature before generating")
-    retrived_dataset = retrive_generated_dataset(dataset_params=dataset_params, generated_dataset_params=generated_dataset_params,
+    retrived_dataset = retrive_generated_dataset(dataset_params=dataset_params, generated_dataset_params=generate_dataset_params,
                               llm_config=llm_config, path=Path("../data/generated/v2"))
     if retrived_dataset:
         return "Generated Dataset with the same exact param already exist!"
 
     generated_dataset = llm_based_ner.generate_dataset(dataset=dataset,
-                                                       generated_dataset_params=generated_dataset_params,
+                                                       generated_dataset_params=generate_dataset_params,
                                                        llm_config=llm_config)
     # save the generated dataset - save dataset params, generated dataset params, llm config, and the dataset itself
 
