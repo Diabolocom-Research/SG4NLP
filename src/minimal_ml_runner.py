@@ -3,17 +3,24 @@ from tqdm.auto import tqdm
 from joblib import Parallel, delayed
 from minimal_runner import benchmark_orch, generate_dataset_orch
 
+# llms = [("openrouter", "meta-llama/llama-3.1-70b-instruct"),
+#                           ("openrouter", "mistralai/mixtral-8x22b-instruct"), ("openai", "gpt-4o-mini"),
+#                           ("openrouter", "anthropic/claude-3-haiku"), ("openrouter", "google/gemini-2.0-flash-001")] # of the form llm_server, llm_model
+
+
 llms = [("openrouter", "meta-llama/llama-3.1-70b-instruct"),
-                          ("openrouter", "mistralai/mixtral-8x22b-instruct"), ("openai", "gpt-4o-mini"),
-                          ("openrouter", "anthropic/claude-3-haiku")]  # of the form llm_server, llm_model
-all_datasets: List[str] = ['crossner_politics', 'crossner_science']
+                          ("openrouter", "meta-llama/llama-3.1-8b-instruct"), ("openrouter", "meta-llama/llama-3.1-405b-instruct"),]
+
+
+all_datasets: List[str] = ['crossner_politics', 'crossner_literature', 'crossner_science']
+# all_datasets: List[str] = []
 
 # Benchmark all LLMS on individual dataset
 all_benchmark_args = []
 for llm_server, model in llms:
     for dataset in all_datasets:
         print(llm_server, model, dataset)
-        dataset_params = Dataset(name=dataset, number_of_test_examples=25)
+        dataset_params = Dataset(name=dataset, number_of_test_examples=200)
         generated_dataset_params = None
         llm_config = LLMConfig(
             llm_server=llm_server,
@@ -57,7 +64,7 @@ all_generate_args = []
 for llm_server, model in llms:
     for dataset in all_datasets:
         print(llm_server, model, dataset)
-        dataset_params = Dataset(name=dataset, number_of_test_examples=25)
+        dataset_params = Dataset(name=dataset, number_of_test_examples=200)
         generated_dataset_params = GenerateDataset(dataset=dataset_params, llm_for_generation=model,
                                                    k_shot=5)
         arguments = {
@@ -82,7 +89,7 @@ for llm_server, model in llms:  # loop for the method
         for llm_server_gen, model_gen in llms[::-1]:  # loops for generating dataset - 2
             # llm config is only for the benchmarking. For generated we would just need name
             print(llm_server, model, dataset, llm_server_gen, model_gen)
-            dataset_params = Dataset(name=dataset, number_of_test_examples=25)
+            dataset_params = Dataset(name=dataset, number_of_test_examples=200)
             generated_dataset_params = GenerateDataset(dataset=dataset_params, llm_for_generation=model_gen,
                                                        k_shot=5)
             llm_config = LLMConfig(

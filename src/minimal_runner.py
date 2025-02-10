@@ -94,12 +94,12 @@ def benchmark_orch(
         with mlflow.start_run():
             mlflow.set_tag("mlflow.runName",
                            f"{benchmark_params.task}__{uuid[:6]}")
-            mlflow.log_params(benchmark_params.__dict__)
-            mlflow.log_params(dataset_params.__dict__)
-            mlflow.log_params(method_params.__dict__)
-            mlflow.log_params(method_params.method_specific_params["llm_config"].__dict__)
+            mlflow.log_param("benchmark_params", benchmark_params.__dict__)
+            mlflow.log_param("dataset_params", dataset_params.__dict__)
+            mlflow.log_param("method_params", method_params.__dict__)
+            mlflow.log_param("method_params_llm_config", method_params.method_specific_params["llm_config"].__dict__)
             if generated_dataset_params:
-                mlflow.log_params(generated_dataset_params.__dict__)
+                mlflow.log_param("generated_dataset_params", generated_dataset_params.__dict__)
             flatten_results = {}
 
             for result_type, result_value in results.items():
@@ -137,13 +137,13 @@ def generate_dataset_orch(dataset_params: Dataset,
 
 
 if __name__ == "__main__":
-    dataset_params = Dataset(name="crossner_politics", number_of_test_examples=50)
+    dataset_params = Dataset(name="crossner_science", number_of_test_examples=50)
     generated_dataset_params = GenerateDataset(dataset=dataset_params, llm_for_generation="llama-3.1-70b-q4", k_shot=5)
     llm_config = LLMConfig()
     method_params = MethodArguments()
-    benchmark_params = MinimalBenchmarkArguments()
+    benchmark_params = MinimalBenchmarkArguments(use_mlflow=False)
     benchmark_orch(benchmark_params=benchmark_params, dataset_params=dataset_params, method_params=method_params,
-                   generated_dataset_params=generated_dataset_params)
+                   generated_dataset_params=None)
 
     # generated_dataset_params = GenerateDataset(dataset=dataset_params, llm_for_generation="llama-3.1-70b-q4", k_shot=5)
     # id = generate_dataset_orch(dataset_params=dataset_params, generate_dataset_params=generated_dataset_params)

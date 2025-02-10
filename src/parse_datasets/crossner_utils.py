@@ -25,7 +25,8 @@ def crossner_lit_labels_and_desc():
         "poem": "The poem entity.",
         "writer": "The writer entity. If a person is working on literature (including writer, novelist, scriptwriter, poet, and etc), you should label it as a writer entity instead of a person entity.",
         "magazine": "The magazine that publishes articles as well as any other literature work.",
-        "literary genre": "The literary genre entity, such as novel and science fiction."
+        "literary genre": "The literary genre entity, such as novel and science fiction.",
+        "award": "The award entity, usually in the field of literature"
     }
 
     return desc, labels
