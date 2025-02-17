@@ -8,9 +8,18 @@ from minimal_runner import benchmark_orch, generate_dataset_orch
 #                           ("openrouter", "anthropic/claude-3-haiku"), ("openrouter", "google/gemini-2.0-flash-001")] # of the form llm_server, llm_model
 
 
-llms = [("openrouter", "meta-llama/llama-3.1-70b-instruct"),
-                          ("openrouter", "meta-llama/llama-3.1-8b-instruct"), ("openrouter", "meta-llama/llama-3.1-405b-instruct"),]
+# llms = [("openrouter", "meta-llama/llama-3.1-70b-instruct"),
+#                           ("openrouter", "meta-llama/llama-3.1-8b-instruct"), ("openrouter", "meta-llama/llama-3.1-405b-instruct"),]
 
+
+
+
+# llms = [("openrouter", "anthropic/claude-3-sonnet"),
+#                           ("openrouter", "anthropic/claude-3-haiku")]
+#
+#
+llms = [("openai", "gpt-4o"),
+                          ("openai", "gpt-4o-mini")]
 
 all_datasets: List[str] = ['crossner_politics', 'crossner_literature', 'crossner_science']
 # all_datasets: List[str] = []

@@ -250,7 +250,7 @@ def generate_dataset(dataset, generated_dataset_params: GenerateDataset, llm_con
     for label, label_desc in tqdm(dataset['extra']['labels'].items(), desc="generating labels"):
         all_generated_labels[label] = generate_labels(theme=dataset['extra']['desc'], ner_class=label, llm=llm)
 
-    example_string = generate_example_string(k_shot=5, dataset=dataset["train"])
+    example_string = generate_example_string(k_shot=generated_dataset_params.k_shot, dataset=dataset["train"])
 
     examples = generate_examples(generated_labels=all_generated_labels, dataset_labels=labels, example_string=example_string,
                       number_of_examples=generated_dataset_params.number_of_examples_to_generate, llm=llm,
